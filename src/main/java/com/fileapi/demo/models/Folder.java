@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Entity
+@Entity(name = "folders")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,18 +15,17 @@ import java.util.List;
 public class Folder {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+    private Date createdAt;
 
     @ManyToOne
     @JoinColumn(name = "main_folder_id")
     private Folder mainFolder;
 
-    @OneToMany(mappedBy = "mainFolder", cascade = CascadeType.ALL)
-    private List<Folder> subFolders = new ArrayList<>();
-
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
-    private Date createdAt;
 }
 
