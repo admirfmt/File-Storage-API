@@ -16,14 +16,13 @@ public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long fileSize;
 
     private String name;
+    private String contentType;
 
     @JsonIgnore
     private byte[] content;
-    private String contentType;
-
-    private Long fileSize;
 
     private Date createdAt;
 
@@ -31,5 +30,10 @@ public class File {
     @JoinColumn(name = "folder_id")
     @JsonIgnore
     private Folder folder;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User owner;
 }
 

@@ -1,5 +1,6 @@
 package com.fileapi.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class Folder {
     private Long id;
 
     private String name;
+
     private Date createdAt;
 
     @ManyToOne
@@ -27,5 +29,10 @@ public class Folder {
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User owner;
 }
 

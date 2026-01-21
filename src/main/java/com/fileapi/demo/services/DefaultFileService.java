@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +32,18 @@ public class DefaultFileService implements IFileService {
         modelFile.setFolder(folder);
 
         return fileRepository.save(modelFile);
+    }
+
+    @Override
+    public Optional<File> getFileById(Long id) {
+        return fileRepository.findById(id);
+    }
+
+    @Override
+    public void deleteFile(Long id) {
+        if (!fileRepository.existsById(id)) {
+            throw new RuntimeException("File not found");
+        }
+        fileRepository.deleteById(id);
     }
 }
