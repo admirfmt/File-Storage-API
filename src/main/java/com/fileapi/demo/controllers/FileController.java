@@ -50,4 +50,9 @@ public class FileController {
         fileService.deleteFile(id);
         return ResponseEntity.ok("File deleted successfully");
     }
+
+    @GetMapping
+    public ResponseEntity<?> getAllFiles(Long id) {
+        return ResponseEntity.ok(fileService.getAllFiles(id));
+    }
 }

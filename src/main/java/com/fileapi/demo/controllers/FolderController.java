@@ -2,7 +2,6 @@ package com.fileapi.demo.controllers;
 
 import com.fileapi.demo.dtos.CreateFolderRequest;
 import com.fileapi.demo.models.Folder;
-import com.fileapi.demo.repositories.IFolderRepository;
 import com.fileapi.demo.services.IFolderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FolderController {
 
-    private final IFolderRepository folderRepository;
     private final IFolderService folderService;
 
     @PostMapping
@@ -27,12 +25,18 @@ public class FolderController {
 
     @GetMapping
     public ResponseEntity<?> getAllFolders() {
-        return ResponseEntity.ok(folderRepository.findAll());
+        return ResponseEntity.ok(folderService.getAllFolders());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getFolderById(@PathVariable Long id) {
         Optional<Folder> folder = folderService.getFolderById(id);
+        return ResponseEntity.ok(folder);
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getFolderByName(@PathVariable String name) {
+        Optional<Folder> folder = folderService.getFolderByName(name);
         return ResponseEntity.ok(folder);
     }
 }
