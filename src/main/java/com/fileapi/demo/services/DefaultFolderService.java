@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +28,10 @@ public class DefaultFolderService implements IFolderService {
         }
 
         return folderRepository.save(folder);
+    }
+
+    @Override
+    public Optional<Folder> getFolderById(Long id) {
+        return folderRepository.findById(id);
     }
 }

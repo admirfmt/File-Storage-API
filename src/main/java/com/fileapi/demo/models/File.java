@@ -1,5 +1,6 @@
 package com.fileapi.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,9 @@ public class File {
     private Long id;
 
     private String name;
-    private String content;
+
+    @JsonIgnore
+    private byte[] content;
     private String contentType;
 
     private Long fileSize;
@@ -26,6 +29,7 @@ public class File {
 
     @ManyToOne
     @JoinColumn(name = "folder_id")
+    @JsonIgnore
     private Folder folder;
 }
 

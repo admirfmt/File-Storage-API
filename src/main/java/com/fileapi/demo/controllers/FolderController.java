@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/folders")
@@ -27,5 +28,11 @@ public class FolderController {
     @GetMapping
     public ResponseEntity<?> getAllFolders() {
         return ResponseEntity.ok(folderRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFolderById(@PathVariable Long id) {
+        Optional<Folder> folder = folderService.getFolderById(id);
+        return ResponseEntity.ok(folder);
     }
 }
