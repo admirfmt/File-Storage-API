@@ -1,6 +1,7 @@
 package com.fileapi.demo.services;
 
 import com.fileapi.demo.dtos.CreateFolderRequest;
+import com.fileapi.demo.exceptions.FolderNotFoundException;
 import com.fileapi.demo.models.Folder;
 import com.fileapi.demo.models.User;
 import com.fileapi.demo.repositories.IFolderRepository;
@@ -29,7 +30,7 @@ public class DefaultFolderService implements IFolderService {
         if (request.getParentFolderId() != null) {
             Folder parentFolder = folderRepository.findByIdAndOwner(
                     request.getParentFolderId(), currentUser)
-                    .orElseThrow(() -> new RuntimeException("Parent folder not found"));
+                    .orElseThrow(() -> new FolderNotFoundException("Parent folder not found"));
             folder.setMainFolder(parentFolder);
         }
 

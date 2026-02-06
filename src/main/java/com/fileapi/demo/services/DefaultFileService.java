@@ -1,6 +1,8 @@
 package com.fileapi.demo.services;
 
 import com.fileapi.demo.dtos.UploadFileRequest;
+import com.fileapi.demo.exceptions.FileNotFoundException;
+import com.fileapi.demo.exceptions.FolderNotFoundException;
 import com.fileapi.demo.models.File;
 import com.fileapi.demo.models.Folder;
 import com.fileapi.demo.models.User;
@@ -25,7 +27,7 @@ public class DefaultFileService implements IFileService {
     public File uploadFile(UploadFileRequest request) throws IOException {
         User currentUser = userService.getCurrentUser();
         Folder folder = folderRepository.findByIdAndOwner(request.getFolderId(), currentUser)
-                .orElseThrow(() -> new RuntimeException("Folder not found"));
+                .orElseThrow(() -> new FolderNotFoundException("Folder not found."));
 
         File modelFile = new File();
         modelFile.setName(request.getFile().getOriginalFilename());
@@ -49,7 +51,7 @@ public class DefaultFileService implements IFileService {
     public void deleteFile(Long id) {
         User currentUser = userService.getCurrentUser();
         File file = fileRepository.findByIdAndOwner(id, currentUser)
-                .orElseThrow(() -> new RuntimeException("File not found"));
+                .orElseThrow(() -> new FileNotFoundException("File not found"));
         fileRepository.delete(file);
     }
 

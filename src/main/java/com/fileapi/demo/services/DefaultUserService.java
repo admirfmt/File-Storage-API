@@ -2,6 +2,9 @@ package com.fileapi.demo.services;
 
 import com.fileapi.demo.dtos.LoginUserRequest;
 import com.fileapi.demo.dtos.RegisterUserRequest;
+import com.fileapi.demo.exceptions.InvalidCredentialsException;
+import com.fileapi.demo.exceptions.UserAlreadyExistsException;
+import com.fileapi.demo.exceptions.UserNotLoggedInException;
 import com.fileapi.demo.models.User;
 import com.fileapi.demo.repositories.IUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +24,7 @@ public class DefaultUserService implements IUserService {
     @Override
     public User register(RegisterUserRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new UserAlreadyExistsException("User with that username already exists.");
         }
 
         User user = new User();
@@ -35,10 +38,9 @@ public class DefaultUserService implements IUserService {
     @Override
     public User login(LoginUserRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
-
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password."));
         if (!user.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
         currentUser = user;
@@ -48,7 +50,7 @@ public class DefaultUserService implements IUserService {
     @Override
     public User getCurrentUser() {
         if (currentUser == null) {
-            throw new RuntimeException("Not logged in");
+            throw new UserNotLoggedInException("Not logged in");
         }
         return currentUser;
     }

@@ -35,4 +35,3 @@ public class Folder {
     @JsonIgnore
     private User owner;
 }
-

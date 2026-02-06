@@ -21,7 +21,6 @@ public class File {
     private String name;
     private String contentType;
 
-    @JsonIgnore
     private byte[] content;
 
     private Date createdAt;
