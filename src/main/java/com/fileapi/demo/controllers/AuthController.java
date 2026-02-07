@@ -1,10 +1,10 @@
 package com.fileapi.demo.controllers;
 
+import com.fileapi.demo.dtos.AuthResponse;
 import com.fileapi.demo.dtos.ErrorResponse;
 import com.fileapi.demo.dtos.LoginUserRequest;
 import com.fileapi.demo.dtos.RegisterUserRequest;
 import com.fileapi.demo.exceptions.UserAlreadyExistsException;
-import com.fileapi.demo.exceptions.UserLoginFailedException;
 import com.fileapi.demo.exceptions.UserNotLoggedInException;
 import com.fileapi.demo.models.User;
 import com.fileapi.demo.services.IUserService;
@@ -27,15 +27,15 @@ public class AuthController {
         } catch (UserAlreadyExistsException ignored) {
             return ResponseEntity
                     .badRequest()
-                    .body(new ErrorResponse("User with " + request.getUsername() + " already exists"));
+                    .body(new ErrorResponse("User with " + request.getUsername() + " already exists."));
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginUserRequest request) {
         try {
-            User user = userService.login(request);
-            return ResponseEntity.ok(user);
+            AuthResponse response = userService.login(request);
+            return ResponseEntity.ok(response);
         } catch (UserNotLoggedInException ignored) {
             return ResponseEntity
                     .badRequest()

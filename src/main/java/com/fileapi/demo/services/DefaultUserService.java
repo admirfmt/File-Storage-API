@@ -1,5 +1,6 @@
 package com.fileapi.demo.services;
 
+import com.fileapi.demo.dtos.AuthResponse;
 import com.fileapi.demo.dtos.LoginUserRequest;
 import com.fileapi.demo.dtos.RegisterUserRequest;
 import com.fileapi.demo.exceptions.InvalidCredentialsException;
@@ -7,7 +8,11 @@ import com.fileapi.demo.exceptions.UserAlreadyExistsException;
 import com.fileapi.demo.exceptions.UserNotLoggedInException;
 import com.fileapi.demo.models.User;
 import com.fileapi.demo.repositories.IUserRepository;
+import com.fileapi.demo.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
@@ -19,7 +24,8 @@ import java.util.Date;
 public class DefaultUserService implements IUserService {
 
     private final IUserRepository userRepository;
-    private User currentUser;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User register(RegisterUserRequest request) {
@@ -29,29 +35,33 @@ public class DefaultUserService implements IUserService {
 
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());  // TODO: hasha senare
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setCreatedAt(new Date());
 
         return userRepository.save(user);
     }
 
     @Override
-    public User login(LoginUserRequest request) {
+    public AuthResponse login(LoginUserRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password."));
-        if (!user.getPassword().equals(request.getPassword())) {
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        currentUser = user;
-        return user;
+        String token = jwtService.generateToken(user.getUsername());
+        return new AuthResponse(token, user.getUsername());
     }
 
     @Override
     public User getCurrentUser() {
-        if (currentUser == null) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new UserNotLoggedInException("Not logged in");
         }
-        return currentUser;
+
+        return (User) authentication.getPrincipal();
     }
 }

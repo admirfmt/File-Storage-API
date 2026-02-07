@@ -43,7 +43,6 @@ public class FolderController {
                     .internalServerError()
                     .body(new ErrorResponse("An error occurred."));
         }
-
     }
 
     @GetMapping

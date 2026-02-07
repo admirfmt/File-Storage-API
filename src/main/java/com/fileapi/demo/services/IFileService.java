@@ -2,7 +2,6 @@ package com.fileapi.demo.services;
 
 import com.fileapi.demo.dtos.UploadFileRequest;
 import com.fileapi.demo.models.File;
-import com.fileapi.demo.models.User;
 
 import java.io.IOException;
 import java.util.List;
