@@ -23,6 +23,16 @@ public class DefaultFileService implements IFileService {
     private final IFolderRepository folderRepository;
     private final IUserService userService;
 
+    /**
+     * Uploads a file to specific folder.
+     * The file is saved as binary data in database.
+     * Only folders with currently logged user can be used.
+     *
+     * @param request UploadFileRequest contains MultipartFile and folderId
+     * @return Uploaded file
+     * @throws IOException if file upload fails
+     * @throws FolderNotFoundException if folder doesn't exist
+     */
     @Override
     public File uploadFile(UploadFileRequest request) throws IOException {
         User currentUser = userService.getCurrentUser();
@@ -41,12 +51,26 @@ public class DefaultFileService implements IFileService {
         return fileRepository.save(modelFile);
     }
 
+    /**
+     * Gets a file based on ID.
+     * Returns only files for currently logged user.
+     *
+     * @param id File ID
+     * @return Optional contains files which exists
+     */
     @Override
     public Optional<File> getFileById(Long id) {
         User currentUser = userService.getCurrentUser();
         return fileRepository.findByIdAndOwner(id, currentUser);
     }
 
+    /**
+     * Deletes a file.
+     * Only files which are owned by current user can be deleted.
+     *
+     * @param id File ID
+     * @throws FileNotFoundException if file doesn't exist
+     */
     @Override
     public void deleteFile(Long id) {
         User currentUser = userService.getCurrentUser();
@@ -55,6 +79,11 @@ public class DefaultFileService implements IFileService {
         fileRepository.delete(file);
     }
 
+    /**
+     * Gets all files for current user.
+     *
+     * @return List of all files
+     */
     @Override
     public List<File> getAllFiles(Long id) {
         User currentUser = userService.getCurrentUser();

@@ -17,6 +17,12 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
+    /**
+     * Generates a JWT-token for a user.
+     *
+     * @param username Username which will be included in token
+     * @return JWT-token as a String
+     */
     public String generateToken(String username) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
@@ -28,14 +34,16 @@ public class JwtService {
                 .sign(algorithm);
     }
 
-    public String validateTokenAndGetUsername(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWTVerifier verifier = JWT.require(algorithm).build();
-            DecodedJWT decodedJWT = verifier.verify(token);
-            return decodedJWT.getSubject();
-        } catch (JWTVerificationException e) {
-            return null;
-        }
+    /**
+     * Validates a JWT-token and extracts username.
+     *
+     * @param token JWT-token to validate.
+     * @return Username from token
+     * @throws JWTVerificationException if token is invalid or expired
+     */
+    public String validateToken(String token) {
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
+        DecodedJWT jwt = verifier.verify(token);
+        return jwt.getSubject();
     }
 }
